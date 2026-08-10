@@ -25,9 +25,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Configure trusted GitHub SSH host keys
+      - name: Configure GitHub SSH host keys
         run: |
           mkdir -p /root/.ssh
+          rm -f /root/.ssh/known_hosts
 
           cat > /root/.ssh/known_hosts <<'EOF'
           github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
@@ -39,13 +40,16 @@ jobs:
           chmod 600 /root/.ssh/known_hosts
 
       - name: Verify GitHub SSH access
+        env:
+          HOME: /root
         run: |
-          ssh -T git@github.com || true
           git ls-remote \
             git@github.com:cu-ecen-aeld/assignments-3-and-later-PeanutButtermitKase.git \
             HEAD
 
       - name: Run full test
+        env:
+          HOME: /root
         run: ./full-test.sh
 
       - name: Cleanup
