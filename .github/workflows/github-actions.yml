@@ -23,20 +23,15 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Fix GitHub known_hosts
-        run: |
-          mkdir -p /root/.ssh
-          ssh-keygen -f /root/.ssh/known_hosts -R github.com || true
-          ssh-keyscan github.com >> /root/.ssh/known_hosts
-
       - name: Test GitHub SSH access
+        env:
+          GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o GlobalKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
         run: |
-          ssh -o StrictHostKeyChecking=no -T git@github.com || true
           git ls-remote git@github.com:cu-ecen-aeld/assignments-3-and-later-PeanutButtermitKase.git HEAD
 
       - name: Run full test
         env:
-          GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
+          GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o GlobalKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
         run: ./full-test.sh
 
       - name: Cleanup
