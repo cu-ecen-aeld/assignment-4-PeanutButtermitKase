@@ -23,7 +23,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Refresh GitHub SSH host key
+      - name: Fix GitHub known_hosts
         run: |
           mkdir -p /root/.ssh
           ssh-keygen -f /root/.ssh/known_hosts -R github.com || true
@@ -33,7 +33,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -T git@github.com || true
           git ls-remote git@github.com:cu-ecen-aeld/assignments-3-and-later-PeanutButtermitKase.git HEAD
-
 
       - name: Run full test
         env:
