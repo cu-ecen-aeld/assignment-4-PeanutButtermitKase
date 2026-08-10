@@ -36,5 +36,26 @@ then
 else
     echo "USING EXISTING BUILDROOT CONFIG"
     echo "To force update, delete .config or make changes using make menuconfig and build again."
-    make -C buildroot BR2_EXTERNAL=${EXTERNAL_REL_BUILDROOT}
+
+    echo "USING EXISTING BUILDROOT CONFIG"
+    echo "To force update, delete .config or make changes using make menuconfig and build again."
+
+    echo "===== SSH DEBUG BEFORE BUILDROOT ====="
+    echo "User: $(id)"
+    echo "HOME=$HOME"
+
+    echo "--- /root/.ssh/known_hosts ---"
+    nl -ba /root/.ssh/known_hosts || true
+
+    echo "--- \$HOME/.ssh/known_hosts ---"
+    nl -ba "$HOME/.ssh/known_hosts" || true
+
+    echo "--- SSH configuration for github.com ---"
+    ssh -G github.com 2>/dev/null | grep -Ei \
+    'userknownhostsfile|globalknownhostsfile|hostname|identityfile' || true
+
+    echo "======================================"
+
+	
+	make -C buildroot BR2_EXTERNAL=${EXTERNAL_REL_BUILDROOT}
 fi
